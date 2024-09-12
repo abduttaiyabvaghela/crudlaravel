@@ -1,5 +1,4 @@
 $(document).ready(function () {
-    let memberIndex = 0;
 
     // Handle marital status change
     $('#marital_status').change(function () {
@@ -31,6 +30,7 @@ $(document).ready(function () {
     $('#add-family-member').click(function () {
         $('#family-member-fields').append(`
             <div class="family-member mb-3 p-3 border rounded">
+                <input type="hidden" name="family_members[${memberIndex}][id]" value="0">
                 <div class="form-group mb-2">
                     <label>Member Name</label>
                     <input type="text" name="family_members[${memberIndex}][name]" class="form-control" placeholder="Enter member's name" required>
@@ -54,7 +54,7 @@ $(document).ready(function () {
                     <label>Education</label>
                     <input type="text" name="family_members[${memberIndex}][education]" class="form-control" placeholder="Enter education details" required>
                 </div>
-                <button type="button" class="btn btn-danger remove-member">Remove Member</button>
+                <button type="button" class="btn btn-danger remove-family-member">Remove</button>
             </div>`);
         memberIndex++;
     });
@@ -69,8 +69,8 @@ $(document).ready(function () {
         }
     });
 
-    // Remove family member field
-    $(document).on('click', '.remove-member', function () {
+    // Remove Family Member button click handler
+    $(document).on('click', '.remove-family-member', function() {
         $(this).closest('.family-member').remove();
     });
 

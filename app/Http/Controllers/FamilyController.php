@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Family;
 use App\Models\FamilyMember;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class FamilyController extends Controller
 {
@@ -137,13 +138,12 @@ class FamilyController extends Controller
 
         // Update or create family members
         if ($request->has('family_members') && !empty($request->family_members)) {
+            
             foreach ($request->family_members as $member) {
-                if (isset($member['id'])) {
-                    // Update existing family member
+                if (isset($member['id']) && $member['id'] != 0) {
                     $familyMember = FamilyMember::findOrFail($member['id']);
                     $familyMember->update($member);
                 } else {
-                    // Create new family member
                     $family->members()->create($member);
                 }
             }
@@ -151,6 +151,11 @@ class FamilyController extends Controller
 
         // Handle photo upload
         if ($request->hasFile('photo')) {
+
+            if ($family->photo) {
+                Storage::disk('public')->delete($family->photo);
+            }
+
             $photoPath = $request->file('photo')->store('photos', 'public');
             $family->update(['photo' => $photoPath]);
         }
@@ -159,7 +164,7 @@ class FamilyController extends Controller
     }
 
     /**
-     * Remove the specified family and member from the database.
+     * Remove the specified family and members from the database.
      */
     public function destroy($id)
     {
